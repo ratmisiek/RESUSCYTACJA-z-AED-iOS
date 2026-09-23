@@ -12,41 +12,34 @@ jobs:
 
     steps:
       - name: Pobierz projekt
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Sprawdź Xcode
         run: |
           xcode-select -p
           xcodebuild -version
 
-      - name: Zbuduj aplikację iOS
+      - name: Zbuduj wersję iPhone (bez podpisu)
         run: |
-          xcodebuild \
-            -project "RESUSCYTACJA_z_AED.xcodeproj" \
-            -scheme "RESUSCYTACJA_z_AED" \
-            -sdk iphonesimulator \
-            -configuration Debug \
-            -derivedDataPath build \
-            CODE_SIGNING_ALLOWED=NO \
-            build
+          xcodebuild             -project "RESUSCYTACJA_z_AED.xcodeproj"             -scheme "RESUSCYTACJA_z_AED"             -sdk iphoneos             -configuration Debug             -derivedDataPath build-device             CODE_SIGNING_ALLOWED=NO             CODE_SIGNING_REQUIRED=NO             build
 
-      - name: Sprawdź gotową aplikację
+      - name: Sprawdź gotową aplikację iPhone
         run: |
-          APP_PATH="build/Build/Products/Debug-iphonesimulator/RESUSCYTACJA z AED.app"
+          APP_PATH="build-device/Build/Products/Debug-iphoneos/RESUSCYTACJA z AED.app"
           test -d "$APP_PATH"
-          echo "Gotowa aplikacja:"
+          echo "Gotowa aplikacja dla iphoneos:"
           ls -la "$APP_PATH"
 
-      - name: Spakuj aplikację
+      - name: Spakuj wersję iPhone
         run: |
-          APP_PATH="build/Build/Products/Debug-iphonesimulator/RESUSCYTACJA z AED.app"
-          ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" "RESUSCYTACJA_z_AED_iOS_Simulator.zip"
-          ls -lh "RESUSCYTACJA_z_AED_iOS_Simulator.zip"
+          APP_PATH="build-device/Build/Products/Debug-iphoneos/RESUSCYTACJA z AED.app"
+          ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" "RESUSCYTACJA_z_AED_iPhone_unsigned.zip"
+          ls -lh "RESUSCYTACJA_z_AED_iPhone_unsigned.zip"
 
-      - name: Udostępnij artefakt
+      - name: Udostępnij artefakt iPhone
         uses: actions/upload-artifact@v4
         with:
-          name: RESUSCYTACJA-z-AED-iOS-Simulator
-          path: RESUSCYTACJA_z_AED_iOS_Simulator.zip
+          name: RESUSCYTACJA-z-AED-iPhone-unsigned
+          path: RESUSCYTACJA_z_AED_iPhone_unsigned.zip
           if-no-files-found: error
           retention-days: 7
