@@ -1,0 +1,63 @@
+// !$*UTF8*$!
+{
+ archiveVersion = 1;
+ classes = {};
+ objectVersion = 56;
+ objects = {
+
+/* Begin PBXBuildFile section */
+  A00000010000000000000001 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000110000000000000001 /* AppDelegate.swift */; };
+  A00000010000000000000002 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000110000000000000002 /* SceneDelegate.swift */; };
+  A00000010000000000000003 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000110000000000000003 /* MainViewController.swift */; };
+  A00000010000000000000004 /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = A00000110000000000000004 /* index.html */; };
+  A00000010000000000000005 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A00000110000000000000005 /* Info.plist */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+  A00000100000000000000001 /* RESUSCYTACJA_z_AED.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RESUSCYTACJA_z_AED.app; sourceTree = BUILT_PRODUCTS_DIR; };
+  A00000110000000000000001 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+  A00000110000000000000002 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+  A00000110000000000000003 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+  A00000110000000000000004 /* index.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = index.html; sourceTree = "<group>"; };
+  A00000110000000000000005 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+  A00000200000000000000001 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+  A00000300000000000000001 = {isa = PBXGroup; children = (A00000300000000000000002, A00000300000000000000003); sourceTree = "<group>"; };
+  A00000300000000000000002 /* RESUSCYTACJA_z_AED */ = {isa = PBXGroup; children = (A00000110000000000000001, A00000110000000000000002, A00000110000000000000003, A00000110000000000000004, A00000110000000000000005); path = RESUSCYTACJA_z_AED; sourceTree = "<group>"; };
+  A00000300000000000000003 /* Products */ = {isa = PBXGroup; children = (A00000100000000000000001); name = Products; sourceTree = "<group>"; };
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+  A00000400000000000000001 /* RESUSCYTACJA_z_AED */ = {isa = PBXNativeTarget; buildConfigurationList = A00000600000000000000002; buildPhases = (A00000210000000000000001, A00000200000000000000001, A00000210000000000000002); buildRules = (); dependencies = (); name = RESUSCYTACJA_z_AED; productName = RESUSCYTACJA_z_AED; productReference = A00000100000000000000001; productType = "com.apple.product-type.application"; };
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+  A00000500000000000000001 /* Project object */ = {isa = PBXProject; attributes = {LastUpgradeCheck = 1600; TargetAttributes = {A00000400000000000000001 = {CreatedOnToolsVersion = 16.0; }; }; }; buildConfigurationList = A00000600000000000000001; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; hasScannedForEncodings = 0; knownRegions = (en, pl); mainGroup = A00000300000000000000001; productRefGroup = A00000300000000000000003; projectDirPath = ""; projectRoot = ""; targets = (A00000400000000000000001); };
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+  A00000210000000000000002 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (A00000010000000000000004, A00000010000000000000005); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+  A00000210000000000000001 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A00000010000000000000001, A00000010000000000000002, A00000010000000000000003); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+  A00000700000000000000001 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = { ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; CLANG_ENABLE_OBJC_ARC = YES; CURRENT_PROJECT_VERSION = 1; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = RESUSCYTACJA_z_AED/Info.plist; IPHONEOS_DEPLOYMENT_TARGET = 15.0; PRODUCT_BUNDLE_IDENTIFIER = pl.michalsniady.resuscytacjazAed; PRODUCT_NAME = "RESUSCYTACJA z AED"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Debug; };
+  A00000700000000000000002 /* Release */ = {isa = XCBuildConfiguration; buildSettings = { ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; CLANG_ENABLE_OBJC_ARC = YES; CURRENT_PROJECT_VERSION = 1; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = RESUSCYTACJA_z_AED/Info.plist; IPHONEOS_DEPLOYMENT_TARGET = 15.0; PRODUCT_BUNDLE_IDENTIFIER = pl.michalsniady.resuscytacjazAed; PRODUCT_NAME = "RESUSCYTACJA z AED"; SWIFT_OPTIMIZATION_LEVEL = "-O"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Release; };
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+  A00000600000000000000001 /* Project configuration list */ = {isa = XCConfigurationList; buildConfigurations = (A00000700000000000000001, A00000700000000000000002); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+  A00000600000000000000002 /* Target configuration list */ = {isa = XCConfigurationList; buildConfigurations = (A00000700000000000000001, A00000700000000000000002); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+/* End XCConfigurationList section */
+
+ };
+ rootObject = A00000500000000000000001;
+}

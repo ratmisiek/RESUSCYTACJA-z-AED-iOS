@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+
+<html lang="pl">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>RESUSCYTACJA z AED</title>
+<style>
+:root{--red:#e92736;--red2:#ff4a56;--ink:#10263d;--muted:#65798a;--bg:#f4f7fa;--card:#fff;--green:#16a765;--blue:#2d83d7;--amber:#e79b16;--line:#dce5ec}
+*{box-sizing:border-box}body{margin:0;background:#dfe6ed;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;color:var(--ink)}
+.wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:22px}
+.phone{width:390px;height:844px;max-width:100%;background:var(--bg);border:8px solid #172331;border-radius:40px;overflow:hidden;position:relative;box-shadow:0 25px 70px #17283b33}
+.status{height:34px;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 17px;font-size:12px;font-weight:800}
+.screen{position:absolute;left:0;right:0;top:34px;bottom:98px;height:auto;display:none;overflow:hidden;padding:13px 16px 10px}.screen.active{display:block}
+.top{display:flex;align-items:center;gap:8px;margin-bottom:10px}.back{border:0;background:none;font-size:28px;line-height:1;cursor:pointer;color:var(--ink);padding:0 5px}.title{flex:1;text-align:center;font-weight:950;font-size:16px}.topright{width:28px}
+.quick{display:flex;gap:7px;margin:0 0 12px}.quick button{flex:1;border:1px solid var(--line);background:#fff;border-radius:12px;padding:8px 6px;font-size:10px;font-weight:950;color:var(--ink);cursor:pointer}.quick .q112{color:var(--red);border-color:#ffd1d5}.quick .qaed{color:#166ea9;border-color:#cfe7f7}
+.progress{display:flex;align-items:center;gap:6px;margin:4px 0 15px}.dot{width:30px;height:30px;border-radius:50%;background:#aebac4;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:900}.dot.on{background:var(--red)}.dot.done{background:var(--green)}.pline{height:2px;background:#c7d1d9;flex:1}
+.hero{background:linear-gradient(145deg,#fff,#edf3f7);border-radius:22px;padding:18px;margin-bottom:10px}.hero h1{font-size:27px;line-height:1.06;margin:0 0 7px}.hero p{margin:0;color:var(--muted);font-size:13px;line-height:1.4}
+.visual{height:190px;background:linear-gradient(145deg,#fff,#edf3f7);border-radius:24px;display:grid;place-items:center;margin:10px 0;font-size:76px;text-align:center;line-height:1.05}
+.instruction{text-align:center}.instruction h2{font-size:26px;margin:5px 0}.instruction p{color:var(--muted);margin:0 0 11px;font-size:13px;line-height:1.35}
+.primary{width:100%;border:0;border-radius:16px;padding:15px;background:linear-gradient(135deg,var(--red),var(--red2));color:#fff;font-weight:950;font-size:16px;cursor:pointer;box-shadow:0 8px 18px #e9273630}.secondary{width:100%;border:1px solid var(--line);border-radius:16px;padding:13px;background:#fff;color:var(--ink);font-weight:900;font-size:13px;cursor:pointer;margin-top:8px}
+.two{display:grid;grid-template-columns:minmax(0,.68fr) minmax(0,1.32fr);gap:9px;align-items:stretch}.two .action{min-height:58px}.two .action.green{font-size:13px;padding:12px 8px}.two .action.red{font-size:16px;padding:16px 8px}.action{border:0;border-radius:16px;padding:15px 7px;font-weight:950;cursor:pointer}.action.red{background:var(--red);color:#fff}.action.green{background:var(--green);color:#fff}
+.hint{margin-top:9px;padding:12px 13px;border-radius:15px;background:#eaf4fb;color:#35556c;font-size:11.5px;line-height:1.35}.hint b{color:var(--ink)}.danger{background:#fff4f4;border:1px solid #ffd5d8;color:#6d3d42}
+.badge{display:inline-flex;gap:5px;align-items:center;background:#e9f7ef;color:#17794e;padding:6px 9px;border-radius:99px;font-size:10px;font-weight:900;margin-bottom:7px}
+.choice{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}.choice button{border:1px solid var(--line);background:#fff;border-radius:15px;padding:13px 8px;font-weight:900;cursor:pointer}.choice button.selected{border:2px solid var(--red);background:#fff6f7}
+.compression.only{padding-bottom:18px}.compression.only .count,.compression.only .meter,.compression.only .metertext{display:none}.compression{background:#10263d;border-radius:23px;padding:13px;color:#fff;text-align:center;margin:9px 0 10px}.compression .label{font-size:10px;letter-spacing:1px;font-weight:900;opacity:.75}.count{font-size:72px;line-height:.9;font-weight:1000;margin:5px 0}.beat{font-size:13px;font-weight:900}.pulse{width:68px;height:68px;border-radius:50%;border:5px solid #fff;margin:8px auto 3px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:23px}.pulse-lungs{display:none;font-size:22px;line-height:1}.pulse.breathing{width:auto;min-width:68px;padding:0 13px}.pulse.breathing .pulse-lungs{display:inline}.pulse.live{animation:pulse .545s infinite ease-in-out}@keyframes pulse{50%{transform:scale(.88);opacity:.65}}.meter{height:8px;background:#52687b;border-radius:9px;overflow:hidden;margin:11px 0 3px}.meter span{display:block;height:100%;background:#fff;width:0;transition:width .1s}.metertext{display:flex;justify-content:space-between;font-size:9px;opacity:.75}
+.voice{display:flex;align-items:center;gap:9px;background:#fff;border-radius:15px;padding:9px;border:1px solid var(--line)}.speaker{width:36px;height:36px;border-radius:11px;background:#eaf0f5;display:grid;place-items:center;font-size:18px}.voice b{font-size:11px}.voice small{display:block;color:var(--muted);font-size:10px;margin-top:2px} .miniVoice{margin:8px 0}.ventWait{margin-top:12px;padding:10px 12px;border-radius:12px;background:#eef4f8;color:#355064;font-size:11px;font-weight:800;line-height:1.35}
+.vent{background:#fff5f6;border:1px solid #ffd8dc;border-radius:19px;padding:16px;text-align:center}.vent-static-lungs{font-size:58px;line-height:1;margin:2px auto 8px;height:104px;display:grid;place-items:center}.vent h2{margin:3px 0 6px;font-size:25px}.vent p{color:#6b5a5e;font-size:12px;margin:0 0 11px;line-height:1.35}50%{transform:scale(1.02,1.04);opacity:.75}}
+.aedmap{height:190px;border-radius:22px;background:#e5edf0;position:relative;overflow:hidden;border:1px solid var(--line)}.aedmap .leaflet-container{height:100%;width:100%;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial}.map-loading{height:100%;display:grid;place-items:center;color:var(--muted);font-size:11px;text-align:center;padding:20px;background:linear-gradient(145deg,#eef4f7,#e4edf1)}.map-legend{position:absolute;left:10px;bottom:10px;z-index:500;background:#fff;border-radius:12px;padding:6px 8px;font-size:9px;font-weight:800;box-shadow:0 2px 8px #17283b22}.map-legend span{display:inline-flex;align-items:center;margin-right:8px}.map-dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:4px}.map-dot.user{background:#2d83d7}.map-dot.aed{background:#e92736}.pin{position:absolute;left:54%;top:43%;width:18px;height:18px;border-radius:50%;background:var(--blue);border:4px solid white}.aedcard{background:#fff;border:1px solid var(--line);border-radius:18px;padding:13px;margin-top:8px}.aedcard b{font-size:20px}.aedcard small{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+.qrbox{background:#fff;border:1px solid var(--line);border-radius:20px;padding:10px;text-align:center;margin-top:9px}.qrbox img{width:118px;height:118px;image-rendering:pixelated}.qrbox b{display:block;font-size:12px;margin-top:2px}.qrbox small{display:block;color:var(--muted);font-size:9px;margin-top:3px}
+.bottom{position:absolute;bottom:26px;left:0;right:0;height:70px;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:center;z-index:5}.nav{border:0;background:none;color:#718596;font-size:10px;font-weight:900;cursor:pointer}.nav .ico{display:block;font-size:20px;margin-bottom:2px}.nav.active{color:var(--red)}.close-app-nav{color:#8b1e27}.close-app-nav .ico{font-size:19px}.author{position:absolute;left:0;right:0;bottom:4px;text-align:center;font-size:8px;color:#a7b2bb;font-weight:600;pointer-events:none}
+.toast{position:absolute;left:18px;right:18px;bottom:108px;background:#10263d;color:#fff;border-radius:15px;padding:12px;text-align:center;font-size:11px;display:none;z-index:30}
+.modal{position:absolute;inset:0;background:#10263dcc;display:none;align-items:flex-end;z-index:20}.modal.open{display:flex}.sheet{width:100%;background:#fff;border-radius:25px 25px 0 0;padding:18px 16px 22px}.sheet h2{margin:0 0 7px;font-size:22px}.sheet p{color:var(--muted);font-size:12px;line-height:1.4}.close{width:100%;border:0;background:#eef3f6;border-radius:15px;padding:13px;font-weight:900;margin-top:8px;cursor:pointer}
+.muted{color:var(--muted)}
+.statusbar{font-size:10px;color:var(--muted);margin-top:7px;text-align:center}.safety{margin:0 0 12px;padding:14px 15px;border-radius:18px;background:#fff0f1;border:2px solid #e92736;color:#7b2028;display:flex;gap:10px;align-items:flex-start}.safety .shield{font-size:25px;line-height:1}.safety b{display:block;color:#8f1720;font-size:14px;margin-bottom:3px}.safety span{font-size:11px;line-height:1.35}.aedloading{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted)}.qrbox img{background:#fff}.qrnote{font-size:10px;color:var(--muted);line-height:1.35;margin-top:6px}
+.cprmodes{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}.cprmode{border:1px solid var(--line);background:#fff;border-radius:15px;padding:11px 7px;font-weight:950;color:var(--ink);cursor:pointer}.cprmode.active{border:2px solid var(--red);background:#fff5f6}.cprmode small{display:block;font-weight:700;color:var(--muted);font-size:10px;margin-top:2px}.return-rko{margin-top:9px}.aed-rko{width:100%;border:1px solid #b8d9ee;border-radius:16px;padding:12px;background:#eaf5fb;color:#145f8f;font-weight:950;font-size:14px;cursor:pointer;margin-top:8px;box-shadow:0 4px 10px rgba(45,131,215,.10)}.aed-rko:active{transform:scale(.99)}.life-btn{margin-top:8px}.aed-live{margin:6px 0 8px;padding:8px 10px;border-radius:12px;background:#eaf7ef;border:1px solid #c8ead8;color:#17794e;font-size:10px;font-weight:950;text-align:center}.aed-cpr-phase{display:none;margin:6px 0 8px;padding:9px 10px;border-radius:14px;background:#fff5f6;border:1px solid #ffd0d5;color:#9b1e2a;font-size:12px;font-weight:950;text-align:center}.aed-cpr-phase.active{display:block}.aed-cpr-phase .phase-icons{font-size:25px;letter-spacing:5px;line-height:1.05;margin-bottom:2px}.vent-actions{display:none;gap:7px;margin-top:8px}.vent-actions button{flex:1;border-radius:14px;padding:11px 7px;font-weight:950;font-size:11px;cursor:pointer}.vent-done{border:0;background:var(--green);color:#fff}.vent-skip{border:1px solid #b8d9ee;background:#eaf5fb;color:#145f8f}
+/* V27 — wspólna animacja obu płuc podczas oddechu zastępczego */
+/* V26 — układ „bez przewijania” dla telefonu */
+@media (max-width:430px){
+  .wrap{padding:0;min-height:100dvh}
+  .phone{width:100vw;max-width:430px;height:100dvh;min-height:640px;border:0;border-radius:0;box-shadow:none}
+}
+@media (max-width:430px) and (max-height:850px){
+  .status{height:28px;padding:0 14px;font-size:11px}
+  .screen{top:28px;bottom:84px;height:auto;overflow:hidden;padding:8px 13px 8px}
+  .top{gap:6px;margin-bottom:6px;min-height:27px}.back{font-size:25px;padding:0 4px}.title{font-size:14px}.topright{width:24px}
+  .quick{gap:6px;margin:0 0 7px}.quick button{border-radius:10px;padding:6px 5px;font-size:9px}
+  .progress{gap:5px;margin:2px 0 8px}.dot{width:25px;height:25px;font-size:10px}.pline{height:2px}
+  .hero{border-radius:17px;padding:11px 12px;margin-bottom:7px}.hero h1{font-size:22px;margin-bottom:4px}.hero p{font-size:11px;line-height:1.28}
+  .visual{height:132px;min-height:132px;border-radius:18px;margin:7px 0;font-size:58px}
+  .instruction h2{font-size:21px;margin:3px 0}.instruction p{font-size:11px;line-height:1.25;margin-bottom:7px}
+  .voice{gap:7px;border-radius:12px;padding:7px}.speaker{width:31px;height:31px;border-radius:9px;font-size:15px}.voice b{font-size:10px}.voice small{font-size:9px;margin-top:1px}
+  .miniVoice{margin:5px 0}
+  .two{gap:7px}.two .action{min-height:49px}.two .action.green{font-size:11px;padding:10px 6px}.two .action.red{font-size:14px;padding:12px 6px}
+  .action{border-radius:13px;padding:12px 6px}.primary{border-radius:13px;padding:12px;font-size:14px}.secondary{border-radius:13px;padding:10px;font-size:11px;margin-top:6px}
+  .hint{margin-top:6px;padding:8px 10px;border-radius:12px;font-size:9.5px;line-height:1.27}.hint b{font-size:10px}
+  .safety{margin:0 0 7px;padding:9px 10px;border-radius:14px;gap:8px;border-width:1px}.safety .shield{font-size:20px}.safety b{font-size:11px;margin-bottom:2px}.safety span{font-size:9.5px;line-height:1.25}
+  .choice{gap:6px;margin-top:7px}.choice button{border-radius:12px;padding:10px 6px;font-size:11px}
+  .badge{padding:5px 7px;border-radius:99px;font-size:9px;margin-bottom:5px}
+  .vent{border-radius:16px;padding:10px}.vent-static-lungs{font-size:50px;height:86px;margin:0 auto 4px}.vent h2{font-size:21px;margin:2px 0 4px}.vent p{font-size:10.5px;line-height:1.28;margin-bottom:5px}
+  .ventWait{margin-top:6px;padding:7px 9px;border-radius:10px;font-size:9.5px;line-height:1.25}
+  .compression{border-radius:18px;padding:9px;margin:6px 0 7px}.compression .label{font-size:8px}.count{font-size:60px;margin:3px 0}.beat{font-size:11px}.pulse{width:54px;height:54px;border-width:4px;font-size:19px;margin:6px auto 2px}.pulse-lungs{font-size:18px}.pulse.breathing{min-width:54px;padding:0 10px}.aed-cpr-phase{margin:5px 0 6px;padding:7px 8px;font-size:10px}.aed-cpr-phase .phase-icons{font-size:21px}.meter{height:6px;margin:7px 0 2px}.metertext{font-size:8px}
+  .cprmodes{gap:6px;margin:6px 0}.cprmode{border-radius:12px;padding:8px 6px;font-size:10px}.cprmode small{font-size:8.5px}
+  .aed-rko{border-radius:13px;padding:10px;font-size:12px;margin-top:6px}
+  .life-btn{margin-top:5px}
+  .statusbar{font-size:8.5px;margin-top:4px}
+  .aedmap{height:145px;border-radius:17px}.map-legend{left:7px;bottom:7px;padding:5px 6px;font-size:8px}.aedcard{border-radius:14px;padding:9px;margin-top:6px}.aedcard b{font-size:15px}.aedcard small{font-size:9px;margin-top:2px}
+  .qrbox{border-radius:15px;padding:6px;margin-top:6px}.qrbox img{width:90px;height:90px}.qrbox b{font-size:10px}.qrbox small{font-size:8px;margin-top:2px}.qrnote{font-size:8.5px;margin-top:4px}
+  .return-rko{margin-top:5px}
+  .bottom{height:58px;bottom:26px}.nav{font-size:8.5px}.nav .ico{font-size:17px;margin-bottom:1px}
+  .toast{left:14px;right:14px;bottom:94px;padding:9px;border-radius:12px;font-size:10px}
+}
+/* V30 — stabilny viewport telefonu: status / ekran / bottom nav; aktywna RKO nie zatrzymuje się przy AED. */
+.screen{--fit-scale:1}
+.screen.fit-content > *{zoom:var(--fit-scale)}
+/* Krótsze telefony: nadal bez przewijania, bez ścinania przycisków */
+@media (max-width:430px) and (max-height:730px){
+  .screen{top:28px;bottom:78px;padding-left:11px;padding-right:11px;padding-bottom:7px}
+  .hero{padding:9px 10px}.hero h1{font-size:20px}.hero p{font-size:10px}
+  .visual{height:105px;min-height:105px;font-size:48px}
+  .aedmap{height:120px}.qrbox img{width:72px;height:72px}
+  .hint{font-size:9px;padding:7px 8px}.primary{padding:10px;font-size:13px}.secondary{padding:8px;font-size:10px}
+  .bottom{height:52px;bottom:26px}
+}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="phone">
+<div class="status"><span id="clock">9:41</span><span>● ● ▰</span></div>
+<section class="screen active" id="start">
+<div class="top"><div style="font-weight:950">♥ RESUSCYTACJA <span style="color:var(--red)">z AED</span></div><div class="topright">🔊</div></div>
+<div class="quick"><button class="q112" onclick="call112()">☎ 112 <span id="callState">NIEZADZWONIONO</span></button><button class="qaed" onclick="go('aed')">⚡ AED</button></div>
+<div class="hero"><h1>RKO — POMOC</h1><p>Nie musisz zapamiętywać algorytmu. Aplikacja prowadzi Cię krok po kroku.</p></div>
+<div class="voice" id="startVoice"><div class="speaker">🔊</div><div><b>„Najpierw upewnij się, że miejsce jest bezpieczne.”</b><small>Zadbaj o własne bezpieczeństwo.</small></div></div>
+<div class="instruction"><h2>KOGO RATUJESZ?</h2><p>Wybierz właściwą ścieżkę.</p></div>
+<div class="choice">
+<button onclick="selectPatient('adult')">🧑<br/>DOROSŁY</button><button onclick="selectPatient('child')">🧒<br/>DZIECKO</button>
+<button onclick="selectPatient('infant')">👶<br/>NIEMOWLĘ</button><button onclick="selectPatient('preg')">🤰<br/>KOBIETA W CIĄŻY</button>
+</div>
+<button class="secondary" onclick="go('join')" style="margin-bottom:10px">👥 RKO JUŻ TRWA — DOŁĄCZ</button><div class="safety"><div class="shield">⚠️</div><div><b>NAJPIERW — SPRAWDŹ, CZY JEST BEZPIECZNIE</b><span>Nie narażaj siebie. Zwróć uwagę na ruch, prąd, ogień, gaz i inne zagrożenia.</span></div></div><div class="hint danger">🩸 <b>Potem sprawdź, czy występuje masywne, zagrażające życiu krwawienie.</b> Jeśli tak — zatamuj je natychmiast.</div>
+<div class="author">ratownik medyczny Michał Śniady</div>
+</section>
+<section class="screen" id="join">
+<div class="top"><button class="back" onclick="go('start')">‹</button><div class="title">RKO JUŻ TRWA</div><div class="topright">♥</div></div>
+<div class="hero"><span class="badge">● DOŁĄCZ DO AKCJI</span><h1>KOGO RATUJESZ?</h1><p>Jeśli RKO już trwa, nie przechodź ponownie całego algorytmu. Wybierz poszkodowanego i kontynuuj RKO.</p></div>
+<div class="choice"><button onclick="joinRescue('adult')">🧑<br/>DOROSŁY</button><button onclick="joinRescue('child')">🧒<br/>DZIECKO</button><button onclick="joinRescue('infant')">👶<br/>NIEMOWLĘ</button><button onclick="joinRescue('preg')">🤰<br/>CIĄŻA</button></div>
+<div class="hint">Nie zatrzymuj prowadzonej RKO tylko po to, aby obsługiwać telefon. Jeśli jest druga osoba, niech zajmie się aplikacją lub AED.</div>
+</section>
+<section class="screen" id="bleed">
+<div class="top"><button class="back" onclick="go('start')">‹</button><div class="title">KROK 1 — KRWAWIENIE</div><div class="topright">☎</div></div>
+<div class="progress"><div class="dot on">1</div><div class="pline"></div><div class="dot">2</div><div class="pline"></div><div class="dot">3</div><div class="pline"></div><div class="dot">4</div></div>
+<div class="hero"><span class="badge">● NAJPIERW</span><h1>CZY KRWAWIENIE ZAGRAŻA ŻYCIU?</h1><p>Jeśli krew wypływa bardzo obficie i nie daje się opanować, działaj od razu.</p></div>
+<div class="visual">🩸<br/>🫱</div>
+<div class="two"><button class="action green" onclick="afterBleeding()">NIE</button><button class="action red" onclick="go('bleedControl')">TAK</button></div>
+<div class="hint">Ten moduł jest krótki. Po opanowaniu krwawienia wracamy dokładnie do właściwej ścieżki.</div>
+</section>
+<section class="screen" id="bleedControl">
+<div class="top"><button class="back" onclick="go('bleed')">‹</button><div class="title">ZATAMUJ KRWAWIENIE</div><div class="topright">☎</div></div>
+<div class="hero"><h1>MOCNY, BEZPOŚREDNI UCISK</h1><p>Uciskaj miejsce krwawienia zdecydowanie. Jeśli opatrunek przesiąka, nie zdejmuj go — dołóż materiał i uciskaj dalej.</p></div>
+<div class="visual">🩹<br/>✋</div>
+<div class="hint"><b>Kończyna — krwotok nie do opanowania:</b> użyj opaski uciskowej, jeśli jest dostępna i potrafisz jej użyć. Zapamiętaj lub zanotuj czas założenia.</div>
+<button class="primary" onclick="bleedingDone()" style="margin-top:10px">✓ KRWAWIENIE OPANOWANE / WRÓĆ</button>
+<button class="secondary" onclick="call112()">☎ ZADZWOŃ 112</button>
+</section>
+<section class="screen" id="reaction">
+<div class="top"><button class="back" onclick="go('start')">‹</button><div class="title">KROK 1 — REAKCJA</div><div class="topright"></div></div>
+<div class="quick"><button class="q112" onclick="call112()">☎ 112 <span id="callState2">NIEZADZWONIONO</span></button><button class="qaed" onclick="go('aed')">⚡ AED</button></div>
+<div class="progress"><div class="dot on">1</div><div class="pline"></div><div class="dot">2</div><div class="pline"></div><div class="dot">3</div><div class="pline"></div><div class="dot">4</div></div>
+<div class="instruction"><h2 id="reactionTitle">SPRAWDŹ, CZY REAGUJE</h2><p id="patientHint">Podejdź do osoby i sprawdź, czy reaguje.</p></div>
+<div class="voice miniVoice"><div class="speaker">🔊</div><div><b>„Sprawdź, czy reaguje.”</b><small>Głośna odpowiedź lub delikatny dotyk.</small></div></div>
+<div class="visual" id="patientVisual">🧑<br/>🫱</div>
+<div class="two"><button class="action green" onclick="responsive()">✓ REAGUJE</button><button class="action red" onclick="unresponsive()">✕ NIE REAGUJE</button></div>
+<div class="hint">🔊 <b>Jeśli reaguje,</b> nie rozpoczynaj RKO. Jeśli nie reaguje, przejdziemy do wezwania pomocy i oceny oddechu.</div>
+</section>
+<section class="screen" id="responsive">
+<div class="top"><button class="back" onclick="go('reaction')">‹</button><div class="title">OSOBA REAGUJE</div><div class="topright"></div></div>
+<div class="hero"><span class="badge">✓ REAGUJE</span><h1>NIE ROZPOCZYNAJ RKO</h1><p>Zapewnij bezpieczeństwo i obserwuj osobę. Jeśli stan się pogorszy, wróć do oceny reakcji i oddechu.</p></div>
+<div class="visual">🧑‍🦱<br/>👁️</div>
+<button class="primary" onclick="go('reaction')">WRÓĆ DO OCENY</button>
+</section>
+<section class="screen" id="call">
+<div class="top"><button class="back" onclick="go('reaction')">‹</button><div class="title">KROK 2 — WEZWIJ POMOC</div><div class="topright"></div></div>
+<div class="progress"><div class="dot done">✓</div><div class="pline"></div><div class="dot on">2</div><div class="pline"></div><div class="dot">3</div><div class="pline"></div><div class="dot">4</div></div>
+<div class="hero"><span class="badge">● TERAZ</span><h1>ZADZWOŃ POD 112 LUB 999</h1><p>Włącz głośnomówiący. Podczas oczekiwania na odebranie połączenia oceń oddech. Dyspozytor może Ci pomagać.</p></div>
+<div class="voice miniVoice"><div class="speaker">🔊</div><div><b>„Zadzwoń pod 112 lub 999.”</b><small>Włącz głośnomówiący.</small></div></div>
+<button class="primary" onclick="call112()">☎   ZADZWOŃ 112</button>
+<button class="secondary" onclick="continueAfterCall()">✓ POMOC JUŻ WEZWANA</button>
+<div class="hint">📍 <b>Jeśli jest druga osoba:</b> poproś ją o przyniesienie AED. Nie opuszczaj niepotrzebnie poszkodowanego.</div>
+</section>
+<section class="screen" id="breath">
+<div class="top"><button class="back" onclick="go('call')">‹</button><div class="title">KROK 2 — ODDECH</div><div class="topright"></div></div>
+<div class="progress"><div class="dot done">✓</div><div class="pline"></div><div class="dot on">2</div><div class="pline"></div><div class="dot">3</div><div class="pline"></div><div class="dot">4</div></div>
+<div class="instruction"><h2>SPRAWDŹ ODDECH</h2><p>PATRZ • SŁUCHAJ • WYCZUJ. Oceń oddech przez <b>nie więcej niż 10 sekund</b>.</p></div>
+<div class="voice miniVoice"><div class="speaker">🔊</div><div><b>„Sprawdź oddech.”</b><small>Masz maksymalnie 10 sekund.</small></div></div>
+<div class="visual"><div id="breathTimer" style="font-size:58px;font-weight:950;line-height:1">10</div><small style="font-weight:900;color:var(--muted)">SEKUND</small></div>
+<div class="two"><button class="action green" onclick="normalBreathing()">✓ ODDYCHA PRAWIDŁOWO</button><button class="action red" onclick="abnormalBreathing()">✕ NIE ODDYCHA PRAWIDŁOWO</button></div>
+<div class="hint">Jeśli masz wątpliwości, traktuj oddech jako nieprawidłowy i postępuj zgodnie z pomocą dyspozytora.</div>
+</section>
+<section class="screen" id="observe">
+<div class="top"><button class="back" onclick="go('breath')">‹</button><div class="title">ODDECH PRAWIDŁOWY</div><div class="topright"></div></div>
+<div class="hero"><span class="badge">✓ ODDYCHA</span><h1>UŁÓŻ NA BOKU</h1><p>Jeśli osoba jest nieprzytomna lub ma obniżoną świadomość, ale oddycha prawidłowo i nie wymaga RKO, ułóż ją w pozycji bocznej bezpiecznej.</p></div>
+<div class="visual">🫁<br/>↪️</div>
+<div class="hint"><b>POZYCJA BOCZNA BEZPIECZNA</b><br/>Ułóż osobę na boku. Następnie <b>co minutę sprawdzaj oddech</b>.</div>
+<div class="hint">Jeśli podejrzewasz poważny uraz, nie przenoś osoby bez potrzeby — postępuj zgodnie z instrukcjami 112.</div>
+<button class="primary" onclick="startObservation()">✓ UŁÓŻ NA BOKU — OBSERWUJ</button>
+<button class="secondary" onclick="go('reaction')">STAN SIĘ POGORSZYŁ — OCEŃ PONOWNIE</button>
+</section>
+<section class="screen" id="observe_wait">
+<div class="top"><button class="back" onclick="go('observe')">‹</button><div class="title">OBSERWUJ ODDECH</div><div class="topright"></div></div>
+<div class="hero"><span class="badge">✓ ODDYCHA</span><h1>OBSERWUJ ODDECH</h1><p><b>Co minutę sprawdzaj oddech.</b> Kontroluj osobę do czasu przyjazdu pomocy. Jeśli oddech stanie się nieprawidłowy lub osoba przestanie reagować, rozpocznij ponowną ocenę i RKO.</p></div>
+<div class="visual">🫁<br/>✓</div>
+<div class="hint"><b>Utrzymuj pozycję boczną bezpieczną.</b><br/>Jeśli oddech przestanie być prawidłowy, rozpocznij ponowną ocenę i RKO.</div>
+<button class="primary" onclick="go('reaction')">ODDECH SIĘ POGORSZYŁ — OCEŃ PONOWNIE</button>
+</section>
+<section class="screen" id="mode">
+<div class="top"><button class="back" onclick="go('breath')">‹</button><div class="title">RKO — WYBÓR</div><div class="topright">🔊</div></div>
+<div class="hero"><h1 id="modeTitle">ROZPOCZNIJ RKO</h1><p id="modeText">Wybierz sposób prowadzenia RKO.</p></div>
+<div class="choice">
+<button id="ratio30" onclick="setCPRMode('30:2')">30 : 2<br/><small>uciski + oddechy</small></button>
+<button id="ratioOnly" onclick="setCPRMode('compressions')">SAME UCISKI<br/><small>bez wentylacji</small></button>
+</div>
+<div class="hint" id="modeHint">Jeśli potrafisz i chcesz wykonywać oddechy ratownicze, wybierz 30:2. Jeśli nie — wykonuj same uciski.</div>
+<button class="primary" onclick="beginCPR()" style="margin-top:10px">ROZPOCZNIJ RKO</button>
+</section>
+<section class="screen" id="pediatric">
+<div class="top"><button class="back" onclick="go('breath')">‹</button><div class="title">RKO — PEDIATRIA</div><div class="topright">🔊</div></div>
+<div class="hero"><span class="badge">● POCZĄTEK RKO</span><h1>5 ODDECHÓW RATOWNICZYCH</h1><p>W ścieżce dziecka i niemowlęcia najpierw wykonaj 5 początkowych oddechów, a następnie przejdź do ucisków.</p></div>
+<div class="visual">🫁<br/>1 → 5</div>
+<button class="primary" onclick="pediatricFiveDone()">✓ 5 ODDECHÓW WYKONANE</button>
+<button class="secondary" onclick="pediatricFiveDone(true)">NIE MOGĘ / NIE CHCĘ WYKONYWAĆ ODDECHÓW</button>
+<div class="hint">Jeśli nie możesz lub nie chcesz wentylować, nie pozostawiaj dziecka bez RKO — przejdź do ucisków i postępuj zgodnie z dyspozytorem.</div>
+</section>
+<section class="screen" id="pedMode">
+<div class="top"><button class="back" onclick="go('pediatric')">‹</button><div class="title">RKO — PEDIATRIA</div><div class="topright"></div></div>
+<div class="hero"><h1>WYBIERZ TRYB RKO</h1><p id="pedModeText">Jeśli jesteś przeszkolony w PBLS na poziomie ERC PBLS lub równoważnym, możesz użyć 15:2. W innym przypadku wybierz 30:2.</p></div>
+<div class="choice"><button onclick="setCPRMode('15:2')">15 : 2<br/><small>przeszkolony PBLS</small></button><button onclick="setCPRMode('30:2')">30 : 2<br/><small>bez PBLS</small></button></div>
+<button class="primary" onclick="beginCPR()" style="margin-top:10px">ROZPOCZNIJ RKO</button>
+</section>
+<section class="screen" id="compress">
+<div class="top"><button class="back" onclick="stopCPR();go('mode')">‹</button><div class="title">RKO — UCISKI</div><div class="topright">🔊</div></div>
+<div class="progress"><div class="dot done">✓</div><div class="pline"></div><div class="dot done">✓</div><div class="pline"></div><div class="dot on">3</div><div class="pline"></div><div class="dot">4</div></div>
+<div class="compression" id="compression">
+<div class="label">UCISKAJ W RYTMIE</div><div class="count" id="count">0</div><div class="beat">100–120 / min</div>
+<div class="pulse" id="pulse"><span>♥</span><span class="pulse-lungs">🫁</span></div><div class="meter"><span id="meter"></span></div>
+<div class="metertext"><span>0</span><span id="cycleLabel">30 UCISKÓW</span></div>
+</div>
+<div class="instruction"><h2>ŚRODEK KLATKI</h2><p>Uciskaj mocno i szybko. Pozwól klatce całkowicie się rozprężyć.</p></div>
+<div class="hint pregnancy-cpr-hint" id="pregnancyCPRHint" style="display:none"><b>🤰 PRZESUŃ BRZUCH / MACICĘ W LEWO</b><br/>Jeśli jest drugi ratownik, niech przesuwa brzuch/macicę w lewo i <b>utrzymuje tę pozycję przez całą RKO</b>, podczas gdy Ty wykonujesz uciski.</div>
+<div class="voice" id="voice"><div class="speaker">🔊</div><div><b id="voiceText">„Uciskaj… uciskaj… uciskaj…”</b><small id="voiceSub">Metronom działa cały czas</small></div></div>
+<div aria-label="Wybór trybu RKO" class="cprmodes" id="liveCPRModes">
+<button class="cprmode" id="cprMode152" onclick="chooseLiveCPRMode('15:2')" style="display:none">15 : 2<small>przeszkolony PBLS</small></button>
+</div>
+<button class="primary" id="cprButton" onclick="toggleCPR()" style="margin-top:2px">■ RKO DZIAŁA — METRONOM AKTYWNY</button>
+<button class="aed-rko" onclick="go('aed')">⚡ ZNAJDŹ AED</button>
+<button class="secondary life-btn" onclick="showLifeSigns()">❤️ KLIKNIJ TU, JEŚLI ZACZĄŁ ODDYCHAĆ</button>
+<div class="statusbar" id="cprStatus">Tryb: —</div>
+</section>
+<section class="screen" id="vent">
+<div class="top"><button class="back" onclick="go('compress')">‹</button><div class="title">RKO — ODDECHY</div><div class="topright">🔊</div></div>
+<div class="vent">
+  <div class="visual vent-static-lungs" aria-hidden="true">🫁</div>
+  <h2 id="ventTitle">2 ODDECHY</h2>
+  <p id="ventText">Wykonaj 2 oddechy ratownicze.</p>
+  <div class="ventWait" id="ventWait">Masz trochę czasu na spokojne wykonanie dwóch oddechów. Nie czekaj jednak długo — po około 5 sekundach wrócimy do ucisków.</div>
+</div>
+<div class="hint" id="ventHint"><b>Wdmuchuj przez około 1 sekundę</b>, obserwując uniesienie klatki piersiowej. Wykonaj dwa oddechy i jak najszybciej wróć do ucisków.</div>
+<button class="secondary" onclick="go('aed')">⚡ POTRZEBUJESZ AED? ZNAJDŹ NAJBLIŻSZY</button>
+</section>
+<section class="screen" id="pregnancy">
+<div class="top"><button class="back" onclick="go('reaction')">‹</button><div class="title">RKO — CIĄŻA</div><div class="topright"></div></div>
+<div class="hero"><span class="badge">🤰 SZCZEGÓLNA ŚCIEŻKA</span><h1>RKO JAK U DOROSŁEGO</h1><p>Podstawowe rozpoznanie NZK i jakość ucisków pozostają bez zmian. Jeśli jest druga osoba, może pomóc w manualnym przemieszczeniu macicy w lewo.</p></div>
+<div class="visual">🤰<br/>❤️</div>
+<div class="hint"><b>🤰 PRZESUŃ MACICĘ W LEWO</b><br/>Jeśli jest drugi ratownik, niech przesuwa macicę w lewo i <b>utrzymuje tę pozycję przez całą RKO</b>. Nie opóźniaj ucisków.</div>
+<div class="hint"><b>Oddechy ratownicze są opcjonalne dla laika.</b><br/>Jeśli nie możesz albo nie chcesz ich wykonywać, <b>nie przerywaj ucisków</b>.</div>
+<button class="primary" onclick="startPregnancyCPR()">▶ ROZPOCZNIJ RKO</button>
+</section>
+<section class="screen" id="aed">
+<div class="top"><button class="back" onclick="returnFromAED()">‹</button><div class="title">AED</div><div class="topright">⚡</div></div>
+<div class="hero"><span class="badge">● AED</span><h1>ZNAJDŹ AED TERAZ</h1><p>Jeśli jest druga osoba, poproś ją o przyniesienie AED. Ty kontynuuj RKO.</p></div><div class="aed-live" id="aedCPRStatus" style="display:none">❤️ RKO TRWA · METRONOM DZIAŁA W TLE</div><div class="aed-cpr-phase" id="aedCPRPhase"><div class="phase-icons">❤️ 🫁</div>ODDECHY RATOWNICZE — MAPA NADAL DZIAŁA</div>
+<div class="hint" id="aedPediatricHint" style="display:none"><b>👶 AED U DZIECKA / NIEMOWLĘCIA</b><br/>Jeśli AED ma <b>tryb dziecięcy</b> — włącz go.<br/>Jeśli go nie ma — <b>użyj AED w trybie standardowym</b>. Nie czekaj na inne AED.<br/>U niemowlęcia i dziecka <b>poniżej 25 kg</b> elektrody ułóż <b>przód–tył</b>.</div>
+<div class="aedmap" id="aedMap"><div class="map-loading">📍 Najpierw pobierz lokalizację telefonu.<br/>Mapa pojawi się po znalezieniu AED.</div></div>
+<div class="aedcard"><b>Najbliższy AED</b><small id="aedDistance">Dane demonstracyjne — brak połączenia z bazą AED.</small><button class="primary" onclick="navigateAED()" style="margin-top:10px">➤ NAWIGUJ</button></div>
+<div class="qrbox"><img alt="Kod QR do nawigacji do najbliższego AED" id="aedQR"/><b id="qrTitle">QR do nawigacji do AED</b><small id="qrText">Najpierw ustal lokalizację telefonu i znajdź najbliższy AED w OpenAEDMap.</small></div>
+<button class="primary" onclick="findNearestAED()" style="margin-top:9px">📍 ZNAJDŹ NAJBLIŻSZY AED</button><div class="statusbar" id="aedStatus">Aplikacja potrzebuje lokalizacji telefonu, aby znaleźć najbliższy AED.</div>
+<button class="secondary return-rko" onclick="returnFromAED()">← WRÓĆ DO RESUSCYTACJI</button>
+<button class="secondary" onclick="aedConnected()">✓ AED JEST JUŻ DOSTĘPNY / PODŁĄCZONY</button>
+</section>
+<section class="screen" id="aedActive">
+<div class="top"><div class="title">AED PROWADZI</div><div class="topright">⚡</div></div>
+<div class="hero"><span class="badge">✓ AED AKTYWNY</span><h1>POSTĘPUJ ZGODNIE Z AED</h1><p>Aplikacja nie konkuruje z komunikatami AED. Skup się na poleceniach urządzenia.</p></div>
+<div class="visual">⚡<br/>❤️</div>
+<div class="hint"><b>Po komunikacie AED:</b> wykonuj dokładnie to, co mówi urządzenie. Jeśli AED zakończy prowadzenie i potrzebna jest dalsza RKO, aplikacja może wznowić odpowiednią ścieżkę.</div>
+<button class="secondary" onclick="aedStopped()">AED PRZESTAŁO PROWADZIĆ — WRÓĆ DO RKO</button>
+</section>
+<section class="screen" id="life">
+<div class="top"><button class="back" onclick="go('compress')">‹</button><div class="title">ODDECH POWRÓCIŁ</div><div class="topright"></div></div>
+<div class="hero"><span class="badge">✓ ODDECH POWRÓCIŁ</span><h1>UŁÓŻ NA BOKU</h1><p>Jeśli osoba nadal jest nieprzytomna lub ma obniżoną świadomość, ułóż ją w pozycji bocznej bezpiecznej.</p></div>
+<div class="visual">🫁<br/>↪️</div>
+<div class="hint"><b>Co minutę sprawdzaj oddech.</b><br/>Jeśli oddech stanie się nieprawidłowy lub osoba przestanie reagować, rozpocznij ponowną ocenę i RKO.</div>
+<button class="primary" onclick="startObservation()">✓ UŁOŻONO NA BOKU — OBSERWUJ</button>
+</section>
+<div class="modal" id="dispatcher">
+<div class="sheet"><h2>☎ 112 — TRYB DYSPOZYTORA</h2><p id="dispatcherText">Aplikacja jest wyciszona. Skup się na rozmowie z dyspozytorem i wykonuj jego polecenia. Po zakończeniu połączenia wybierz „WRÓĆ DO RKO”.</p>
+<button class="primary" onclick="dispatcherDone()">✓ WRÓĆ DO RKO / APLIKACJI</button><button class="close" onclick="dispatcherDone()">ZAMKNIJ</button></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<div class="bottom">
+<button class="nav active" onclick="go('start')"><span class="ico">⌂</span>START</button>
+<button class="nav" onclick="call112()"><span class="ico">☎</span>112</button>
+<button class="nav" onclick="go('aed')"><span class="ico">⚡</span>AED</button>
+<button class="nav" onclick="showLifeSigns()"><span class="ico">♥</span>ODDECH</button>
+<button class="nav close-app-nav" onclick="closeApplication()"><span class="ico">✕</span>ZAMKNIJ</button>
+</div>
+</div></div>
+<script>
+const state={
+ patient:null, bleedingControlled:false, returnAfterBleeding:'reaction',
+ called112:false, dispatcherActive:false, resumeScreen:null, resumeAction:null, resumeCPR:false,
+ cprStarted:false, cprMode:null, cprRunning:false, compressionCount:0, ventActive:false, cprScreen:null,
+ pediatricInitialDone:false, aedActive:false, previousScreen:'start', lastScreen:'start', aedReturnScreen:'compress', autoCPRStarted:false, breathCheckTimer:null, breathCheckRemaining:10, joinedCPR:false
+};
+let timer=null, audioCtx=null, beatNo=0, toastTimer=null, ventTimer=null;
+function ensureMetronomeAudio(){
+  try{
+    if(window.AndroidBridge && AndroidBridge.startMetronome){
+      if(AndroidBridge.setMetronomeRatio) AndroidBridge.setMetronomeRatio(state.cprMode==='15:2'?15:30);
+      AndroidBridge.startMetronome();
+      return;
+    }
+    if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state==='suspended') audioCtx.resume();
+  }catch(e){}
+}
+function metronomeClick(kind='normal'){
+  try{
+    if(window.AndroidBridge && AndroidBridge.metronomeClick){ AndroidBridge.metronomeClick(kind); return; }
+    if(!audioCtx)return;
+    const now=audioCtx.currentTime;
+    const osc=audioCtx.createOscillator(), gain=audioCtx.createGain();
+    osc.type='sine';
+    osc.frequency.value=kind==='final'?1320:(kind==='warning'?1040:880);
+    const volume=kind==='final'?0.30:(kind==='warning'?0.26:0.22);
+    gain.gain.setValueAtTime(0.0001,now);
+    gain.gain.exponentialRampToValueAtTime(volume,now+0.004);
+    gain.gain.exponentialRampToValueAtTime(0.0001,now+0.055);
+    osc.connect(gain).connect(audioCtx.destination);
+    osc.start(now); osc.stop(now+0.06);
+  }catch(e){}
+}
+
+const patientNames={adult:'dorosły',child:'dziecko',infant:'niemowlę',preg:'kobieta w ciąży'};
+const patientEmoji={adult:'🧑',child:'🧒',infant:'👶',preg:'🤰'};
+
+function $(id){return document.getElementById(id)}
+function toast(t){const x=$('toast');x.textContent=t;x.style.display='block';clearTimeout(toastTimer);toastTimer=setTimeout(()=>x.style.display='none',2600)}
+function speak(text,onend){
+ if(state.dispatcherActive||state.cprMode==='compressions')return;
+ try{
+   if(window.AndroidBridge&&AndroidBridge.speak){
+     AndroidBridge.speak(text);
+     // Native Android TTS reports readiness asynchronously; do not fake an onend.
+     if(typeof onend==='function')setTimeout(onend,500);
+     return;
+   }
+   speechSynthesis.cancel();
+   const u=new SpeechSynthesisUtterance(text);
+   u.lang='pl-PL';u.rate=.95;u.pitch=1;
+   if(typeof onend==='function')u.onend=()=>onend();
+   speechSynthesis.speak(u);
+ }catch(e){if(typeof onend==='function')onend();}
+}
+
+function checkNativeTTS(){
+ try{
+   if(window.AndroidBridge&&AndroidBridge.isTtsReady&&AndroidBridge.isTtsReady()) return;
+   if(window.AndroidBridge&&AndroidBridge.ttsStatus&&AndroidBridge.ttsStatus()!=='OK'){
+     const old=$('ttsDiag'); if(old) return;
+     const d=document.createElement('div'); d.id='ttsDiag'; d.className='toast'; d.style.display='block';
+     d.innerHTML='🔊 <b>Lektor nie jest dostępny</b><br><small>W emulatorze/telefonie trzeba mieć zainstalowany polski głos TTS.</small><br><button onclick="if(window.AndroidBridge&&AndroidBridge.openTtsSettings)AndroidBridge.openTtsSettings()" style="margin-top:7px;border:0;border-radius:10px;padding:8px 12px;font-weight:900">USTAWIENIA LEKTORA</button>';
+     document.body.appendChild(d);
+   }
+ }catch(e){}
+}
+
+function fitScreen(id){
+ const el=$(id); if(!el)return;
+ el.style.setProperty('--fit-scale','1'); el.classList.add('fit-content');
+ requestAnimationFrame(()=>{
+   const available=el.clientHeight;
+   let needed=el.scrollHeight;
+   if(needed>available){
+     let scale=Math.max(.82, Math.min(1, available/needed));
+     el.style.setProperty('--fit-scale',scale.toFixed(3));
+   }
+ });
+}
+window.addEventListener('resize',()=>{const a=document.querySelector('.screen.active');if(a)fitScreen(a.id)});
+
+function go(id){
+ if(!$(id))return;
+ try{if(window.AndroidBridge&&AndroidBridge.stopSpeech)AndroidBridge.stopSpeech();if(typeof speechSynthesis!=='undefined')speechSynthesis.cancel()}catch(e){}
+ if(id!=='vent' && typeof ventTimer!=='undefined') {
+   clearTimeout(ventTimer);
+   if(state.ventActive && id!=='compress' && id!=='aed'){
+     state.ventActive=false;
+   }
+ }
+ if(id!=='breath') stopBreathTimer();
+ if(id==='aed' && state.lastScreen!=='aed'){
+   state.aedReturnScreen = state.cprStarted ? 'compress' : state.lastScreen;
+ }
+ if(state.dispatcherActive)return;
+ document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
+ $(id).classList.add('active');
+ if(id!=='compress'&&id!=='vent'&&id!=='aed') stopCPR();
+ if((id==='compress'||id==='aed') && state.cprStarted) state.cprScreen=id;
+ state.previousScreen=state.lastScreen; state.lastScreen=id;
+ updateUI();
+ fitScreen(id);
+ if(id==='breath') setTimeout(startBreathTimer,60);
+ if(id==='vent') setTimeout(()=>{
+   setupVentScreen();
+ },0);
+ if(id==='aed'){
+   if(state.cprRunning) ensureMetronomeAudio();
+   if(!nearestAED) setTimeout(findNearestAED,80);
+ }
+}
+let startVoicePlayed=false;
+function playStartSafety(){
+ if(startVoicePlayed) return;
+ startVoicePlayed=true;
+ setTimeout(()=>speak('Najpierw upewnij się, że miejsce jest bezpieczne.'),180);
+}
+function updateUI(){
+ $('callState').textContent=state.called112?'WEZWANE':'NIEZADZWONIONO';
+ $('callState2').textContent=state.called112?'WEZWANE':'NIEZADZWONIONO';
+ if(state.patient){
+   $('patientHint').textContent='Sprawdź, czy '+patientNames[state.patient]+' reaguje.';
+   $('patientVisual').innerHTML=patientEmoji[state.patient]+'<br>🫱';
+ }
+ if($('aedCPRStatus')) $('aedCPRStatus').style.display=state.cprRunning?'block':'none';
+ const breathing=!!state.ventActive;
+ if($('pulse')) $('pulse').classList.toggle('breathing',breathing);
+ if($('aedCPRPhase')) $('aedCPRPhase').classList.toggle('active',breathing && $('aed')?.classList.contains('active'));
+ if($('aedCPRStatus') && breathing) $('aedCPRStatus').textContent='❤️ RKO TRWA · 🫁 CZAS ODDECHÓW · METRONOM DZIAŁA W TLE';
+}
+function selectPatient(p){
+ state.patient=p;state.bleedingControlled=false;state.cprMode=null;state.pediatricInitialDone=false;
+ state.returnAfterBleeding='reaction';go('bleed');
+ // Po wyborze ścieżki lektor przechodzi do kolejnego działania: oceny masywnego krwawienia.
+ setTimeout(()=>{
+   if(document.getElementById('bleed')?.classList.contains('active')){
+     speak('Teraz sprawdź, czy występuje masywne, zagrażające życiu krwawienie.');
+   }
+ },120);
+}
+function afterBleeding(){state.bleedingControlled=true;go('reaction');setTimeout(()=>speak('Sprawdź, czy reaguje.'),120)}
+function bleedingDone(){state.bleedingControlled=true;go(state.returnAfterBleeding||'reaction');if((state.returnAfterBleeding||'reaction')==='reaction')setTimeout(()=>speak('Sprawdź, czy reaguje.'),120)}
+function responsive(){state.unresponsive=false;go('responsive')}
+function unresponsive(){state.unresponsive=true;state.resumeScreen='breath';if(!state.called112){go('call');setTimeout(()=>speak('Zadzwoń pod sto dwanaście lub dziewięćset dziewięćdziesiąt dziewięć.'),120)}else{go('breath');setTimeout(()=>speak('Sprawdź oddech.'),120)}}
+function continueAfterCall(){state.called112=true;go('breath');setTimeout(()=>speak('Sprawdź oddech.'),120)}
+function startBreathTimer(){
+ stopBreathTimer(); state.breathCheckRemaining=10; if($('breathTimer'))$('breathTimer').textContent='10';
+ state.breathCheckTimer=setInterval(()=>{state.breathCheckRemaining--; if($('breathTimer'))$('breathTimer').textContent=Math.max(0,state.breathCheckRemaining); if(state.breathCheckRemaining<=0){stopBreathTimer(); setTimeout(()=>speak('Koniec sprawdzania oddechu.'),80);}},1000);
+}
+function stopBreathTimer(){if(state.breathCheckTimer){clearInterval(state.breathCheckTimer);state.breathCheckTimer=null}}
+function normalBreathing(){stopBreathTimer();if(state.unresponsive){go('observe');setTimeout(()=>speak('Ułóż osobę na boku i co minutę sprawdzaj oddech.'),120)}else{go('responsive')}}
+function startObservation(){go('observe_wait');setTimeout(()=>speak('Ułóż osobę na boku i co minutę sprawdzaj oddech.'),120)}
+function abnormalBreathing(){
+ state.cprStarted=true;
+ state.lastScreen='breath';
+ state.breathAbnormal=true;
+ if(state.patient==='child'||state.patient==='infant'){
+   state.pediatricInitialDone=false;
+   go('pediatric');
+   setTimeout(()=>speak('Rozpocznij resuscytację. Najpierw wykonaj pięć początkowych oddechów ratowniczych.'),120);
+ } else if(state.patient==='preg') {
+   state.cprMode='30:2';
+   ensureMetronomeAudio();
+   setupCPR();
+   go('compress');
+   setTimeout(()=>{startCPR();speak('Rozpocznij uciski. Jeśli nie możesz albo nie chcesz wykonywać oddechów ratowniczych, cały czas prowadź uciski. Jeśli jest drugi ratownik, przesuń macicę w lewo i utrzymuj ją w tej pozycji.' )},180);
+ } else {
+   state.cprMode='30:2';
+   ensureMetronomeAudio();
+   setupCPR();
+   go('compress');
+   setTimeout(()=>{startCPR();speak('Rozpocznij uciski. Jeśli nie możesz albo nie chcesz wykonywać oddechów ratowniczych, cały czas prowadź uciski.')},180);
+ }
+}
+function setPregnancyMode(m){state.cprMode=m;setupCPR();toast('Wybrano tryb '+m)}
+function startPregnancyCPR(){state.cprStarted=true;if(!state.cprMode)state.cprMode='30:2';setupCPR();go('compress');startCPR()}
+function joinRescue(p){
+ if(!p)return;
+ state.patient=p;state.cprStarted=true;state.joinedCPR=true;
+ if(p==='child'||p==='infant'){
+   state.pediatricInitialDone=true;
+   state.cprMode='30:2';
+   setupCPR();go('compress');
+   setTimeout(()=>speak('RKO już trwa. Nie wykonuj ponownie pięciu początkowych oddechów. Kontynuuj uciski. Jeśli jesteś przeszkolony w PBLS, możesz wybrać 15 do 2.'),120);
+ } else {
+   state.pediatricInitialDone=true;state.cprMode='30:2';setupCPR();go('compress');
+   setTimeout(()=>speak(p==='preg'?'Kontynuuj RKO. Jeśli jest drugi ratownik, przesuń macicę w lewo i utrzymuj ją w tej pozycji. Jeśli nie możesz albo nie chcesz wykonywać oddechów, nie przerywaj ucisków.':'Kontynuuj uciski. Jeśli nie możesz albo nie chcesz wykonywać oddechów ratowniczych, nie przerywaj ucisków.'),120);
+ }
+ setTimeout(()=>startCPR(),180);
+}
+function setCPRMode(m){state.cprMode=m;setupCPR();document.querySelectorAll('#mode .choice button,#pedMode .choice button').forEach(b=>b.classList.remove('selected'));toast('Wybrano tryb '+m);if((state.patient==='child'||state.patient==='infant')&&state.pediatricInitialDone){go('compress');setTimeout(startCPR,180)}}
+function chooseLiveCPRMode(m){
+ if(m==='compressions'){
+   state.cprMode='compressions';
+   setupCPR();
+   if(!state.cprRunning) startCPR();
+   else {
+     beatNo=0;state.compressionCount=0;$('count').textContent='0';$('meter').style.width='0%';
+   }
+   toast('Tryb: same uciski');
+   return;
+ }
+ state.cprMode=(state.patient==='child'||state.patient==='infant') ? (m==='15:2'?'15:2':'30:2') : '30:2';
+ setupCPR();
+ if(!state.cprRunning) startCPR();
+ else {
+   beatNo=0;state.compressionCount=0;$('count').textContent='0';$('meter').style.width='0%';
+   speak('Wracamy do ucisków.');
+ }
+ toast('Tryb: '+state.cprMode);
+}
+function changeCPRMode(){
+ // Zachowane dla kompatybilności ze starszymi odwołaniami; wybór trybu odbywa się bezpośrednio na ekranie RKO.
+ go('compress');
+}
+function beginCPR(){
+ if((state.patient==='child'||state.patient==='infant')&&!state.pediatricInitialDone){toast('Najpierw wykonaj pięć początkowych oddechów.');return}
+ state.cprStarted=true;
+ if(!state.cprMode){
+   if(state.patient==='child'||state.patient==='infant')go('pedMode'); else state.cprMode='30:2';
+ }
+ if(state.cprMode){setupCPR();go('compress');speak('Rozpocznij uciski. Tempo od stu do stu dwudziestu na minutę.')}
+}
+function pediatricFiveDone(skipped=false){
+ state.pediatricInitialDone=true;
+ if(skipped){state.cprMode='compressions';toast('Przejdź do ucisków. Dyspozytor może pomagać.')}
+ else go('pedMode');
+ if(skipped){setupCPR();go('compress');}
+}
+function setupVentScreen(){
+ const adultPreg=(state.patient==='adult'||state.patient==='preg');
+ if($('ventTitle'))$('ventTitle').textContent='2 ODDECHY';
+ if($('ventText'))$('ventText').textContent=adultPreg
+   ? 'Wykonaj dwa oddechy ratownicze. Nie musisz nic potwierdzać.'
+   : 'Wykonaj 2 oddechy ratownicze.';
+ if($('ventWait'))$('ventWait').textContent=adultPreg
+   ? 'Masz około 5 sekund na wykonanie dwóch oddechów. Potem automatycznie wracamy do odliczania ucisków.'
+   : 'Po dwóch oddechach automatycznie wracamy do ucisków.';
+ if($('ventHint'))$('ventHint').innerHTML=adultPreg
+   ? '<b>Każdy oddech przez około 1 sekundę</b>, obserwując uniesienie klatki piersiowej. Po drugim oddechu wracamy do ucisków — bez potwierdzania.'
+   : '<b>Wdmuchuj przez około 1 sekundę</b>, obserwując uniesienie klatki piersiowej. Po dwóch oddechach wróć do ucisków.';
+}
+function finishAdultVentilation(){
+ if(!(state.patient==='adult'||state.patient==='preg')||!state.ventActive)return;
+ clearTimeout(ventTimer);ventTimer=null;
+ state.ventActive=false;
+ // Nowa seria ucisków zaczyna się od zera. Resetujemy również natywny licznik
+ // metronomu, ale sam dźwięk metronomu pozostaje ciągły.
+ try{if(window.AndroidBridge&&AndroidBridge.resetMetronomeCycle)AndroidBridge.resetMetronomeCycle()}catch(e){}
+ state.compressionCount=0;
+ $('count').textContent='0';$('meter').style.width='0%';
+ const target=(state.cprScreen==='aed')?'aed':'compress';
+ go(target);
+ updateUI();
+ if(!state.cprRunning)setTimeout(()=>{if(!state.cprRunning)startCPR()},60);
+}
+function startAdultVentilationCycle(){
+ clearTimeout(ventTimer);ventTimer=null;
+ // Statyczne płuca są prostą ilustracją etapu dwóch oddechów. Metronom ma działać także w tle.
+ ensureMetronomeAudio();
+ if(!state.cprRunning)startCPR();
+ updateUI();
+ ventTimer=setTimeout(finishAdultVentilation,5000);
+}
+function setupCPR(){
+ $('count').textContent='0';$('meter').style.width='0%';
+ $('compression').classList.toggle('only',state.cprMode==='compressions');
+ $('voiceText').textContent='„Uciskaj… uciskaj… uciskaj…”';
+ $('voiceSub').textContent=state.cprMode==='30:2'?'Metronom działa cały czas · mocniejszy sygnał przed 30. uciskiem':'Metronom działa cały czas';
+ $('voice').style.display=state.cprMode==='compressions'?'none':'flex';
+ if($('pregnancyCPRHint'))$('pregnancyCPRHint').style.display=state.patient==='preg'?'block':'none';
+ $('cprStatus').textContent='Tryb: '+(state.cprMode||'—')+(state.patient==='preg'?' · ciąża':'');
+ $('cycleLabel').textContent=state.cprMode==='compressions'?'UCISKAJ CIĄGLE':((state.cprMode||'30:2').split(':')[0]+' UCISKÓW');
+ const b15=$('cprMode152');
+ const modes=$('liveCPRModes');
+ const ped=(state.patient==='child'||state.patient==='infant');
+ // U dorosłych i kobiet w ciąży wybór 30:2 / same uciski nie jest potrzebny.
+ // Metronom prowadzi cykl 30 ucisków, a lektor wyjaśnia, że można nie przerywać ucisków.
+ if(modes)modes.style.display=ped?'grid':'none';
+ if(b15){b15.style.display=ped?'block':'none';b15.classList.toggle('active',state.cprMode==='15:2');}
+ if($('cprButton'))$('cprButton').textContent=state.cprRunning?'■ ZATRZYMAJ METRONOM':'▶ URUCHOM METRONOM';
+}
+function toggleCPR(){state.cprRunning?stopCPR():startCPR()}
+function startCPR(){
+ if(state.cprRunning)return;
+ ensureMetronomeAudio();
+ state.cprRunning=true;beatNo=0;state.compressionCount=0;$('cprButton').textContent='■ ZATRZYMAJ METRONOM';
+ $('pulse').classList.add('live');if(state.cprMode!=='compressions')speak('Uciskaj w rytmie.');
+ const interval=60000/110;
+ timer=setInterval(beat,interval);
+ beat();
+}
+function stopCPR(){
+ if(timer){clearInterval(timer);timer=null}
+ try{if(window.AndroidBridge&&AndroidBridge.stopMetronome)AndroidBridge.stopMetronome()}catch(e){}
+ state.cprRunning=false;$('pulse').classList.remove('live');
+ if($('cprButton'))$('cprButton').textContent='▶ URUCHOM METRONOM I LICZNIK';
+}
+function beat(){
+ if(!state.cprRunning||state.dispatcherActive)return;
+ beatNo++;
+
+ // Dorosły/ciąża: podczas dwóch oddechów metronom pozostaje aktywny.
+ // Sprawdzamy także aktywny ekran, żeby nawet po utracie flagi stanu nie zablokować rytmu.
+ if(state.ventActive || document.getElementById('vent')?.classList.contains('active')){
+   metronomeClick();
+   return;
+ }
+
+ if(state.cprMode==='compressions'){metronomeClick();return;}
+
+ state.compressionCount++;
+ const ratio=state.cprMode==='15:2'?15:30;
+ const n=((state.compressionCount-1)%ratio)+1;
+ metronomeClick(n===ratio?'final':(n>=Math.max(1,ratio-4)?'warning':'normal'));
+ $('count').textContent=n;$('meter').style.width=(n/ratio*100)+'%';
+
+ if(n===ratio){
+   if((state.patient==='adult'||state.patient==='preg')&&state.cprMode==='30:2'){
+     state.ventActive=true;
+     $('voiceText').textContent='„2 ODDECHY — JEŚLI MOŻESZ”';
+     $('voiceSub').textContent='🫁 Oddechy teraz · metronom działa cały czas';
+     updateUI();
+     setTimeout(()=>{
+       ensureMetronomeAudio();
+       startAdultVentilationCycle();
+       speak('Dwa oddechy ratownicze. Po drugim wracamy do ucisków.');
+     },80);
+     return;
+   }
+
+   // Pediatria pozostaje w dotychczasowym trybie.
+   stopCPR();
+   state.ventActive=true;
+   $('voiceText').textContent='„2 oddechy ratownicze.”';
+   updateUI();
+   setTimeout(()=>{speak('Dwa oddechy ratownicze.');startVentWait()},80);
+ }
+}
+function ventDone(){
+ clearTimeout(ventTimer);
+ state.ventActive=false;
+ setupCPR();
+ go((state.cprScreen==='aed')?'aed':'compress');
+ if(!state.cprRunning)setTimeout(startCPR,120);
+}
+function ventSkip(){
+ clearTimeout(ventTimer);
+ state.ventActive=false;
+ setupCPR();
+ go('compress');
+ if(!state.cprRunning)setTimeout(startCPR,120);
+ speak('Kontynuuj uciski w rytmie.');
+}
+function startVentWait(){
+ clearTimeout(ventTimer);
+ if(state.patient==='adult'||state.patient==='preg'){
+   startAdultVentilationCycle();
+   return;
+ }
+ ventTimer=setTimeout(()=>{
+   state.ventActive=false;
+   setupCPR();
+   go((state.cprScreen==='aed')?'aed':'compress');
+   setTimeout(startCPR,180);
+ },5000);
+}
+
+function showLifeSigns(){if(state.cprRunning)stopCPR();go('life');setTimeout(()=>speak('Jeśli zaczął oddychać prawidłowo, ułóż go na boku i co minutę sprawdzaj oddech.'),120)}
+function call112(){
+ state.called112=true;
+ state.resumeScreen=state.lastScreen;
+ state.resumeCPR=!!state.cprRunning || (state.cprStarted && state.lastScreen==='compress');
+ state.resumeAction=state.resumeCPR?'cpr':(state.lastScreen==='breath'?'breath':(state.lastScreen==='aed'?'aed':'screen'));
+ if(state.cprRunning)stopCPR();
+ try{if(window.AndroidBridge&&AndroidBridge.stopSpeech)AndroidBridge.stopSpeech();if(typeof speechSynthesis!=='undefined')speechSynthesis.cancel()}catch(e){}
+ $('dispatcher').classList.add('open');state.dispatcherActive=true;
+ $('callState').textContent='WEZWANE';$('callState2').textContent='WEZWANE';
+ try{window.location.href='tel:112'}catch(e){}
+}
+function dispatcherDone(){
+ $('dispatcher').classList.remove('open');state.dispatcherActive=false;
+ const action=state.resumeAction||'screen';
+ const resume=state.resumeScreen||'breath';
+ updateUI();
+ if(action==='cpr'&&state.cprStarted){
+   setupCPR();go('compress');setTimeout(()=>{if(!state.cprRunning)startCPR()},250);
+ }else if(action==='breath'){
+   go('breath');setTimeout(()=>speak('Sprawdź oddech.'),120);
+ }else if(action==='aed'){
+   go('aed');
+ }else{
+   go(resume);
+ }
+ toast('112 wezwane — wracamy do właściwego etapu.');
+}
+function resumeFromDispatcher(){dispatcherDone()}
+function resumeLabel(id){return id==='compress'?'RKO':id==='breath'?'oceny oddechu':id==='aed'?'AED':'algorytmu'}
+const OPENAED_BASE='https://openaedmap.org/api/v1';
+const QR_BASE='https://quickchart.io/qr?size=260&margin=2&text=';
+let userLocation=null, nearestAED=null, aedMapInstance=null, aedUserMarker=null, aedMarker=null, aedLine=null, aedRouteLine=null;
+function haversine(lat1,lon1,lat2,lon2){const R=6371000,toRad=x=>x*Math.PI/180;const dLat=toRad(lat2-lat1),dLon=toRad(lon2-lon1);const a=Math.sin(dLat/2)**2+Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;return 2*R*Math.asin(Math.sqrt(a));}
+function getPosition(){
+ return new Promise((resolve,reject)=>{
+   let done=false;
+   const finish=(fn,v)=>{if(done)return;done=true;fn(v)};
+   window.setNativeLocation=(lat,lon,accuracy)=>{
+     lat=Number(lat);lon=Number(lon);accuracy=Number(accuracy)||0;
+     if(Number.isFinite(lat)&&Number.isFinite(lon)&&lat>=-90&&lat<=90&&lon>=-180&&lon<=180){
+       finish(resolve,{lat,lon,accuracy});
+     }else finish(reject,new Error('Otrzymano nieprawidłowe współrzędne GPS'));
+   };
+   window.nativeLocationTimeout=()=>finish(reject,new Error('Nie udało się pobrać lokalizacji telefonu'));
+   window.nativeLocationError=(msg)=>finish(reject,new Error(msg||'Brak lokalizacji'));
+   if(window.AndroidBridge&&AndroidBridge.requestLocation){
+     try{AndroidBridge.requestLocation();}catch(e){finish(reject,e)}
+   }else if(navigator.geolocation){
+     navigator.geolocation.getCurrentPosition(p=>finish(resolve,{lat:p.coords.latitude,lon:p.coords.longitude,accuracy:p.coords.accuracy}),e=>finish(reject,e),{enableHighAccuracy:true,timeout:6000,maximumAge:120000});
+   }else finish(reject,new Error('Brak geolokalizacji'));
+ });
+}
+async function getCountryCode(lat,lon){
+ const u='https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=3&lat='+encodeURIComponent(lat)+'&lon='+encodeURIComponent(lon);
+ const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),3000);
+ try{
+   const r=await fetch(u,{headers:{'Accept':'application/json'},signal:controller.signal,cache:'force-cache'});
+   if(!r.ok)throw new Error('Nie udało się ustalić kraju');
+   const j=await r.json();const c=j.address&&j.address.country_code;
+   if(!c)throw new Error('Brak kodu kraju');return c.toUpperCase();
+ }finally{clearTimeout(timeout);}
+}
+async function getWalkingRoute(from,to){
+ const url='https://routing.openstreetmap.de/routed-foot/route/v1/driving/'+from.lon+','+from.lat+';'+to.lon+','+to.lat+'?overview=full&geometries=geojson&steps=false';
+ const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),5000);
+ try{
+   const r=await fetch(url,{signal:controller.signal,cache:'no-store'});
+   if(!r.ok)throw new Error('Nie udało się wyznaczyć trasy pieszej');
+   const j=await r.json();
+   if(j.code!=='Ok'||!j.routes||!j.routes[0])throw new Error('Brak trasy pieszej');
+   const route=j.routes[0];
+   return {distance:route.distance,duration:route.duration,geometry:route.geometry};
+ }finally{clearTimeout(timeout);}
+}
+
+window.nativeLocationPermissionGranted=function(){
+  const s=$('aedStatus');
+  if(s) s.innerHTML='<span class="aedloading">📍 Zgoda na lokalizację udzielona — pobieram pozycję telefonu…</span>';
+};
+window.nativeLocationPermissionDenied=function(){
+  const s=$('aedStatus');
+  if(s) s.textContent='Lokalizacja jest potrzebna do znalezienia najbliższego AED. Możesz udzielić zgody w ustawieniach telefonu.';
+};
+window.nativeLocationTimeout=function(){
+  const s=$('aedStatus');
+  if(s) s.textContent='Nie udało się uzyskać świeżej lokalizacji telefonu. Sprawdź, czy Lokalizacja jest włączona i spróbuj ponownie.';
+};
+window.nativeLocationError=function(msg){
+  const s=$('aedStatus');
+  if(s) s.textContent=msg||'Nie udało się pobrać lokalizacji telefonu.';
+};
+async function findNearestAED(){
+ const status=$('aedStatus');
+ status.innerHTML='<span class="aedloading">⏳ Ustalam lokalizację telefonu…</span>';
+ try{
+   userLocation=await getPosition();
+   status.innerHTML='<span class="aedloading">📍 GPS telefonu: '+userLocation.lat.toFixed(5)+', '+userLocation.lon.toFixed(5)+' · dokładność około '+Math.round(userLocation.accuracy||0)+' m · szukam AED…</span>';
+   updateAEDMap();
+   const cc=await getCountryCode(userLocation.lat,userLocation.lon);
+   const cacheKey='ratujTerazAED_'+cc;
+   let gj=null;
+   try{
+     const cached=sessionStorage.getItem(cacheKey);
+     if(cached)gj=JSON.parse(cached);
+   }catch(e){}
+   if(!gj){
+     status.innerHTML='<span class="aedloading">🔎 Pobieram dane AED z OpenAEDMap…</span>';
+     const controller=new AbortController();
+     const timeout=setTimeout(()=>controller.abort(),6000);
+     try{
+       const r=await fetch(OPENAED_BASE+'/countries/'+cc+'.geojson',{signal:controller.signal,cache:'force-cache'});
+       if(!r.ok)throw new Error('OpenAEDMap nie zwrócił danych dla tego kraju');
+       gj=await r.json();
+       try{sessionStorage.setItem(cacheKey,JSON.stringify(gj));}catch(e){}
+     }finally{clearTimeout(timeout);}
+   }else{
+     status.innerHTML='<span class="aedloading">⚡ Dane AED są już w pamięci — wyszukuję…</span>';
+   }
+   let best=null,bestD=Infinity;
+   for(const f of (gj.features||[])){
+     const c=f.geometry&&f.geometry.coordinates;if(!c||c.length<2)continue;
+     const d=haversine(userLocation.lat,userLocation.lon,c[1],c[0]);
+     if(d<bestD){bestD=d;best={lat:c[1],lon:c[0],distance:d,props:f.properties||{}};}
+   }
+   if(!best)throw new Error('Nie znaleziono AED w danych OpenAEDMap dla tej lokalizacji');
+   nearestAED=best;
+   status.innerHTML='<span class="aedloading">🚶 Wyznaczam rzeczywistą trasę pieszą do AED…</span>';
+   try{
+     const route=await getWalkingRoute(userLocation,nearestAED);
+     nearestAED.routeDistance=route.distance;
+     nearestAED.routeDuration=route.duration;
+     nearestAED.routeGeometry=route.geometry;
+   }catch(routeError){
+     nearestAED.routeDistance=null;
+     nearestAED.routeDuration=null;
+     nearestAED.routeGeometry=null;
+   }
+   updateAEDUI();
+ }catch(e){
+   nearestAED=null;
+   const msg=e.name==='AbortError'?'Przekroczono czas oczekiwania na bazę AED.':(e.message||'błąd');
+   $('aedDistance').textContent='Nie udało się automatycznie znaleźć AED: '+msg;
+   status.textContent='Możesz użyć mapy i nawigacji ręcznie albo spróbować ponownie.';
+   toast('Nie udało się pobrać danych AED');
+   updateAEDMap();
+ }
+}
+function formatDistance(m){return m<1000?Math.round(m)+' m':(m/1000).toFixed(1).replace('.',',')+' km'}
+function googleDirectionsUrl(){if(!nearestAED)return 'https://www.google.com/maps/search/?api=1&query=AED';return 'https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(nearestAED.lat+','+nearestAED.lon)+'&travelmode=walking';}
+let leafletPromise=null;
+function loadLeaflet(){
+ if(typeof L!=='undefined')return Promise.resolve();
+ if(leafletPromise)return leafletPromise;
+ leafletPromise=new Promise((resolve,reject)=>{
+   if(!document.getElementById('leafletCss')){
+     const css=document.createElement('link');css.id='leafletCss';css.rel='stylesheet';css.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';document.head.appendChild(css);
+   }
+   const script=document.createElement('script');
+   script.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+   script.onload=()=>resolve();script.onerror=()=>reject(new Error('Nie udało się załadować biblioteki mapy'));
+   document.head.appendChild(script);
+ });
+ return leafletPromise;
+}
+async function updateAEDMap(){
+ const el=$('aedMap');
+ if(!el || !userLocation)return;
+ try{
+   await loadLeaflet();
+ }catch(e){
+   el.innerHTML='<div class=\"map-loading\">Mapa chwilowo niedostępna.<br>Możesz użyć przycisku NAWIGUJ.</div>';
+   return;
+ }
+ if(!aedMapInstance){
+   el.innerHTML='';
+   aedMapInstance=L.map(el,{zoomControl:false,attributionControl:true});
+   L.control.zoom({position:'topright'}).addTo(aedMapInstance);
+   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'© OpenStreetMap contributors'}).addTo(aedMapInstance);
+   aedMapInstance.setView([userLocation.lat,userLocation.lon],16);
+ }
+ const user=[userLocation.lat,userLocation.lon];
+ if(aedUserMarker) aedMapInstance.removeLayer(aedUserMarker);
+ aedUserMarker=L.circleMarker(user,{radius:8,color:'#fff',weight:3,fillColor:'#2d83d7',fillOpacity:1}).addTo(aedMapInstance).bindPopup('<b>Twój telefon</b><br>Lokalizacja GPS');
+ if(aedMarker) aedMapInstance.removeLayer(aedMarker);
+ if(aedLine) aedMapInstance.removeLayer(aedLine);
+ if(aedRouteLine) aedMapInstance.removeLayer(aedRouteLine);
+ if(nearestAED){
+   const aed=[nearestAED.lat,nearestAED.lon];
+   const label=nearestAED.routeDistance!=null?formatDistance(nearestAED.routeDistance)+' pieszo':formatDistance(nearestAED.distance)+' w linii prostej';
+   aedMarker=L.marker(aed).addTo(aedMapInstance).bindPopup('<b>Najbliższy AED</b><br>'+label);
+   if(nearestAED.routeGeometry&&nearestAED.routeGeometry.coordinates){
+     const latlngs=nearestAED.routeGeometry.coordinates.map(c=>[c[1],c[0]]);
+     aedRouteLine=L.polyline(latlngs,{color:'#e92736',weight:5,opacity:.9}).addTo(aedMapInstance);
+     const bounds=L.latLngBounds(latlngs.concat([user,aed]));
+     aedMapInstance.fitBounds(bounds,{padding:[28,28],maxZoom:16});
+   }else{
+     aedLine=L.polyline([user,aed],{color:'#2d83d7',weight:3,dashArray:'7 7',opacity:.75}).addTo(aedMapInstance);
+     const bounds=L.latLngBounds([user,aed]);
+     aedMapInstance.fitBounds(bounds,{padding:[28,28],maxZoom:16});
+   }
+ }
+ setTimeout(()=>aedMapInstance.invalidateSize(),80);
+}
+
+function updateAEDUI(){
+ const ped=(state.patient==='child'||state.patient==='infant'); $('aedPediatricHint').style.display=ped?'block':'none';
+ const d=nearestAED.routeDistance!=null?formatDistance(nearestAED.routeDistance):formatDistance(nearestAED.distance);
+ const walkTime=nearestAED.routeDuration!=null?' · około '+Math.max(1,Math.round(nearestAED.routeDuration/60))+' min pieszo':'';
+ if(nearestAED.routeDistance!=null){
+   $('aedDistance').textContent='Najbliższy znaleziony AED: '+d+' pieszo'+walkTime;
+   $('aedStatus').textContent='Lokalizacja telefonu: OK · trasa piesza: '+d+walkTime;
+ }else{
+   $('aedDistance').textContent='Trasa piesza niedostępna · '+d+' w linii prostej';
+   $('aedStatus').textContent='Lokalizacja telefonu: OK · nie udało się wyznaczyć trasy pieszej';
+ }
+ $('qrTitle').textContent='ZESKANUJ — PROWADŹ DO AED';
+ $('qrText').textContent='Kod prowadzi bezpośrednio do tego AED w Google Maps. Drugi ratownik nie potrzebuje aplikacji Ratuj Teraz.';
+ $('aedQR').src=QR_BASE+encodeURIComponent(googleDirectionsUrl());
+ $('aedQR').onerror=()=>{ $('qrText').textContent='QR chwilowo niedostępny. Użyj przycisku NAWIGUJ lub skopiuj adres Google Maps.'; };
+ $('aedQR').title='Google Maps — trasa piesza do najbliższego AED';
+ updateAEDMap();
+}
+function navigateAED(){
+ if(!nearestAED){findNearestAED();return;}
+ const lat=Number(nearestAED.lat),lon=Number(nearestAED.lon);
+ if(window.AndroidBridge&&AndroidBridge.navigateToAED&&Number.isFinite(lat)&&Number.isFinite(lon)){
+   AndroidBridge.navigateToAED(lat,lon);
+ }else{
+   const url=googleDirectionsUrl();
+   window.open(url,'_blank','noopener');
+ }
+}
+
+function aedConnected(){
+ state.aedActive=true;stopCPR();go('aedActive');setTimeout(()=>speak('AED prowadzi. Postępuj zgodnie z poleceniami urządzenia.'),120);
+}
+function aedStopped(){
+ state.aedActive=false;toast('AED zakończyło prowadzenie. Wznów RKO.');state.cprStarted=true;
+ setupCPR();go('compress');setTimeout(startCPR,300);
+}
+function returnFromAED(){
+ const target=state.cprStarted?'compress':(state.aedReturnScreen||'start');
+ state.aedReturnScreen=target;
+ if(target==='compress'&&state.cprStarted){
+   setupCPR();
+   go('compress');
+   if(!state.cprRunning)setTimeout(startCPR,120);
+ }else{
+   go(target);
+ }
+}
+function closeApplication(){
+  if(window.AndroidBridge&&AndroidBridge.closeApp){
+    AndroidBridge.closeApp();
+  }else{
+    try{window.close()}catch(e){}
+  }
+}
+function selectBack(){go(state.previousScreen||'start')}
+function keydown(e){if(e.key==='Escape' && state.dispatcherActive)dispatcherDone()}
+document.addEventListener('keydown',keydown);
+function updateClock(){const d=new Date();$('clock').textContent=d.toLocaleTimeString('pl-PL',{hour:'2-digit',minute:'2-digit'})}
+updateClock();setInterval(updateClock,30000);updateUI();
+document.addEventListener('DOMContentLoaded',playStartSafety);
+setTimeout(checkNativeTTS,1800);
+window.addEventListener('pagehide',()=>{try{if(window.AndroidBridge&&AndroidBridge.stopSpeech)AndroidBridge.stopSpeech()}catch(e){}});
+</script>
+</body></html>
