@@ -10,7 +10,7 @@
   A00000010000000000000002 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000110000000000000002 /* SceneDelegate.swift */; };
   A00000010000000000000003 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000110000000000000003 /* MainViewController.swift */; };
   A00000010000000000000004 /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = A00000110000000000000004 /* index.html */; };
-  A00000010000000000000005 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A00000110000000000000005 /* Info.plist */; };
+ 
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,7 +41,7 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-  A00000210000000000000002 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (A00000010000000000000004, A00000010000000000000005); runOnlyForDeploymentPostprocessing = 0; };
+  A00000210000000000000002 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (A00000010000000000000004); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
