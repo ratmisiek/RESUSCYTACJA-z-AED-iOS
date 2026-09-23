@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Pobierz projekt
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Sprawdź Xcode
         run: |
@@ -29,3 +29,24 @@ jobs:
             -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO \
             build
+
+      - name: Sprawdź gotową aplikację
+        run: |
+          APP_PATH="build/Build/Products/Debug-iphonesimulator/RESUSCYTACJA z AED.app"
+          test -d "$APP_PATH"
+          echo "Gotowa aplikacja:"
+          ls -la "$APP_PATH"
+
+      - name: Spakuj aplikację
+        run: |
+          APP_PATH="build/Build/Products/Debug-iphonesimulator/RESUSCYTACJA z AED.app"
+          ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" "RESUSCYTACJA_z_AED_iOS_Simulator.zip"
+          ls -lh "RESUSCYTACJA_z_AED_iOS_Simulator.zip"
+
+      - name: Udostępnij artefakt
+        uses: actions/upload-artifact@v4
+        with:
+          name: RESUSCYTACJA-z-AED-iOS-Simulator
+          path: RESUSCYTACJA_z_AED_iOS_Simulator.zip
+          if-no-files-found: error
+          retention-days: 7
