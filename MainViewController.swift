@@ -4,7 +4,7 @@ import CoreLocation
 import AVFoundation
 
 @MainActor
-final class MainViewController: UIViewController, WKNavigationDelegate, CLLocationManagerDelegate, WKScriptMessageHandler, AVSpeechSynthesizerDelegate {
+final class MainViewController: UIViewController, WKNavigationDelegate, WKScriptMessageHandler {
     private var webView: WKWebView!
     private let locationManager = CLLocationManager()
     private let speech = AVSpeechSynthesizer()
@@ -34,12 +34,6 @@ final class MainViewController: UIViewController, WKNavigationDelegate, CLLocati
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         UIApplication.shared.isIdleTimerDisabled = false
-    }
-
-    deinit {
-        UIApplication.shared.isIdleTimerDisabled = false
-        stopMetronome()
-        locationManager.stopUpdatingLocation()
     }
 
     // MARK: WebView
@@ -138,15 +132,6 @@ final class MainViewController: UIViewController, WKNavigationDelegate, CLLocati
             try session.setActive(true, options: [])
         } catch {}
         speech.speak(utterance)
-    }
-
-    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
-        // Keep the audio session ready for the CPR metronome after narration.
-        try? AVAudioSession.sharedInstance().setActive(true, options: [])
-    }
-
-    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
-        try? AVAudioSession.sharedInstance().setActive(true, options: [])
     }
 
     // MARK: Metronome
@@ -268,29 +253,6 @@ final class MainViewController: UIViewController, WKNavigationDelegate, CLLocati
         }
     }
 
-    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        switch manager.authorizationStatus {
-        case .authorizedWhenInUse, .authorizedAlways:
-            manager.desiredAccuracy = kCLLocationAccuracyBest
-            manager.distanceFilter = kCLDistanceFilterNone
-            manager.requestLocation()
-            sendJS("window.nativeLocationPermissionGranted && window.nativeLocationPermissionGranted()")
-        case .denied, .restricted:
-            sendJS("window.nativeLocationPermissionDenied && window.nativeLocationPermissionDenied()")
-        default:
-            break
-        }
-    }
-
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let loc = locations.last else { return }
-        sendJS("window.setNativeLocation && window.setNativeLocation(\(loc.coordinate.latitude),\(loc.coordinate.longitude),\(loc.horizontalAccuracy))")
-    }
-
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        sendJS("window.nativeLocationError && window.nativeLocationError('Nie udało się pobrać lokalizacji telefonu.')")
-    }
-
     private func sendJS(_ javascript: String) {
         DispatchQueue.main.async { [weak self] in
             self?.webView.evaluateJavaScript(javascript)
@@ -342,5 +304,48 @@ final class MainViewController: UIViewController, WKNavigationDelegate, CLLocati
             return
         }
         decisionHandler(.allow)
+    }
+}
+
+
+// MARK: - Legacy delegate conformances (Swift 6)
+// CLLocationManager and AVSpeechSynthesizer use legacy Objective-C delegate
+// contracts. The controller remains MainActor-isolated; @preconcurrency keeps
+// the delegate contract compatible with Swift 6 concurrency checking.
+extension MainViewController: @preconcurrency CLLocationManagerDelegate {
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        switch manager.authorizationStatus {
+        case .authorizedWhenInUse, .authorizedAlways:
+            locationManager.desiredAccuracy = kCLLocationAccuracyBest
+            locationManager.distanceFilter = kCLDistanceFilterNone
+            locationManager.requestLocation()
+            sendJS("window.nativeLocationPermissionGranted && window.nativeLocationPermissionGranted()")
+        case .denied, .restricted:
+            sendJS("window.nativeLocationPermissionDenied && window.nativeLocationPermissionDenied()")
+        default:
+            break
+        }
+    }
+
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let loc = locations.last else { return }
+        let latitude = loc.coordinate.latitude
+        let longitude = loc.coordinate.longitude
+        let accuracy = loc.horizontalAccuracy
+        sendJS("window.setNativeLocation && window.setNativeLocation(\(latitude),\(longitude),\(accuracy))")
+    }
+
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        sendJS("window.nativeLocationError && window.nativeLocationError('Nie udało się pobrać lokalizacji telefonu.')")
+    }
+}
+
+extension MainViewController: @preconcurrency AVSpeechSynthesizerDelegate {
+    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
+        try? AVAudioSession.sharedInstance().setActive(true, options: [])
+    }
+
+    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
+        try? AVAudioSession.sharedInstance().setActive(true, options: [])
     }
 }
